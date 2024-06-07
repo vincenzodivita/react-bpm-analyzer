@@ -4,9 +4,19 @@ import { analyze } from 'web-audio-beat-detector';
 const BpmAnalyzer = () => {
   const [bpm, setBpm] = useState(null);
   const [error, setError] = useState(null);
+  const [file, setFile] = useState(null);
 
-  const handleFileChange = async (event) => {
-    const file = event.target.files[0];
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setError(null);
+    } else {
+      setError('Nessun file selezionato');
+    }
+  };
+
+  const handleAnalyze = async () => {
     if (file) {
       try {
         // Creare un contesto audio
@@ -35,6 +45,7 @@ const BpmAnalyzer = () => {
     <div>
       <h1>Analizzatore di BPM</h1>
       <input type="file" accept="audio/*" onChange={handleFileChange} />
+      <button onClick={handleAnalyze}>Calcola BPM</button>
       {bpm && <p>BPM: {bpm}</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
