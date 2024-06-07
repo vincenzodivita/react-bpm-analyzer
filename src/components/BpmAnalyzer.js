@@ -5,6 +5,10 @@ const BpmAnalyzer = ({ file }) => {
   const [bpm, setBpm] = useState(null);
   const [error, setError] = useState(null);
 
+  const roundBpm = (value) => {
+    return Math.round(value * 100) / 100;
+  };
+
   const handleAnalyze = async () => {
     if (file) {
       try {
@@ -12,7 +16,10 @@ const BpmAnalyzer = ({ file }) => {
         const arrayBuffer = await file.arrayBuffer();
         const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
         const detectedBpm = await analyze(audioBuffer);
-        setBpm(detectedBpm);
+        
+        // Arrotonda i BPM usando la funzione roundBpm
+        const roundedBpm = roundBpm(detectedBpm);
+        setBpm(roundedBpm);
         setError(null);
       } catch (err) {
         setError('Errore durante l\'analisi del file audio');
@@ -26,7 +33,7 @@ const BpmAnalyzer = ({ file }) => {
   return (
     <div>
       <button onClick={handleAnalyze}>Calcola BPM</button>
-      {bpm && <p>BPM: {bpm}</p>}
+      {bpm !== null && <p>BPM: {bpm}</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
